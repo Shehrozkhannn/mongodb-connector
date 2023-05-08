@@ -6,6 +6,10 @@ import axios from 'axios';
 import { useFormik } from 'formik';
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from "react-router-dom";
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 // import { useEffect } from "react";
 
 const ErrorToast = (msg) => {
@@ -16,6 +20,7 @@ const successToast = (msg) => {
     toast.success(msg);
 }
 const SignUp = () => {
+    const [show, setShow] = useState(false);
     const [res, setRes] = useState(null);
     const navigate = useNavigate();
     const formik = useFormik({
@@ -25,9 +30,13 @@ const SignUp = () => {
             dbName: "",
         },
     })
+    const handleShow = () => setShow(true);
+    const handleClose = () => setShow(false);
     const signUp = () => {
+        setShow(true)
         // const myUrl = 'http://172.104.174.187:4128/api/signup';
-        const myUrl = 'http://localhost:4128/api/signup';
+        const myUrl = 'http://172.104.174.187:4128/api/get-data';
+        // const myUrl = 'http://localhost:4128/api/signup';
         axios.post(myUrl, formik?.values)
             .then((response) => {
                 // console.log(formik.values);
@@ -88,24 +97,36 @@ const SignUp = () => {
                 </div>
                     <div className={SignUpCSS["signup-btn"]}>
                         <input type="button"
-                         name="" value="Create Connection" onClick={() => signUp()} />
+                         name="" value="Archieve logs" id="signin-btn" onClick={() => signUp()} />
                     </div>
                 </form>
             </div>
             <ToastContainer />
-            {
+            <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>STARTUP LOGS</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body className={SignUpCSS["modal-bodyy"]}>
+                            {
             res &&
-                    <ul>
-                    {res.map((item, index) => (
-                        <div key={index}>
-                            <li>{item._id}</li>
-                            <p>{item.startTimeLocal}</p>
-                            <p>{item.pid}</p>
-                            {/* <li>{item.profession}</li> */}
-                            </div>
-                    ))}
-                    </ul>
-        }
+                        <Table striped bordered hover variant="dark">
+                            <thead>
+                                <th>HostName</th>
+                                <th>Local Time</th>
+                            </thead>
+                        {res.map((item, index) => (
+                            <tbody>
+                                <tr key={index}>
+                                    <td>{item.hostname}</td>
+                                    <td>{item.startTimeLocal}</td>
+                                </tr>
+                            </tbody>
+                        ))}
+                        </Table>
+}
+                        </Modal.Body>
+                    </Modal>
+       
         </div>
     )
 }

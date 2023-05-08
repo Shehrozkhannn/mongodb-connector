@@ -86,3 +86,7 @@
     font-size: 12px;
     margin-left: 43px;
 }
+.modal-bodyy {
+    padding: 32px 35px !important;
+    background: #2c3034 !important;
+}
